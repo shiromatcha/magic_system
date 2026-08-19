@@ -312,16 +312,17 @@ window.filterMagic = async function() {
   const selectedRaces = [...document.querySelectorAll(".tag.selected[data-race]")]
     .map(e => e.dataset.race);
 
-  const ignoreRace = selectedRaces.includes("全種族");
+　const ignoreRace = selectedRaces.includes("全種族");
 
-  const selectedElements = [...document.querySelectorAll(".tag.selected[data-element])]
+　const selectedElements = [...document.querySelectorAll(".tag.selected[data-element]")]
     .map(e => e.dataset.element);
 
-  const selectedTypes = [...document.querySelectorAll(".tag.selected[data-type])]
+　const selectedTypes = [...document.querySelectorAll(".tag.selected[data-type]")]
     .map(e => e.dataset.type);
 
-  const selectedRanks = [...document.querySelectorAll(".tag.selected[data-rank])]
+　const selectedRanks = [...document.querySelectorAll(".tag.selected[data-rank]")]
     .map(e => e.dataset.rank);
+
 
   const { data } = await supabase.from("magic").select("*");
 
