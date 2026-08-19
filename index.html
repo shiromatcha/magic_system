@@ -223,17 +223,10 @@ window.addMagic = async function() {
 window.filterMagic = async function() {
   const keyword = document.getElementById("keyword").value;
 
-  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race])]
-    .map(btn => btn.dataset.race);
-
-  const selectedElement = [...document.querySelectorAll(".tag.selected[data-element])]
-    .map(btn => btn.dataset.element);
-
-  const selectedType = [...document.querySelectorAll(".tag.selected[data-type])]
-    .map(btn => btn.dataset.type);
-
-  const selectedRank = [...document.querySelectorAll(".tag.selected[data-rank])]
-    .map(btn => btn.dataset.rank);
+  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race]")];
+  const selectedElement = [...document.querySelectorAll(".tag.selected[data-element]")];
+  const selectedType = [...document.querySelectorAll(".tag.selected[data-type]")];
+  const selectedRank = [...document.querySelectorAll(".tag.selected[data-rank]")];
 
   let query = supabase.from("magic").select("*");
 
