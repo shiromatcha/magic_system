@@ -292,7 +292,7 @@ window.addMagic = async function() {
 
   const rank = document.getElementById("add_rank").value;
 
-  const { error } = await supabase
+  const { error } = await client
     .from("magic")
     .insert([{ name, user, effect, race, element, type, rank }]);
 
@@ -324,7 +324,7 @@ window.filterMagic = async function() {
     .map(e => e.dataset.rank);
 
 
-  const { data } = await supabase.from("magic").select("*");
+  const { data } = await client.from("magic").select("*");
 
   const filtered = data.filter(row => {
 
@@ -417,7 +417,7 @@ createEditTags();
 
 // ▼編集開始
 window.editMagic = async function(id) {
-  const { data } = await supabase.from("magic").select("*").eq("id", id).single();
+  const { data } = await client.from("magic").select("*").eq("id", id).single();
 
   document.getElementById("edit_id").innerText = id;
   document.getElementById("edit_name").value = data.name;
@@ -455,7 +455,7 @@ window.saveEdit = async function() {
 
   const rank = document.getElementById("edit_rank").value;
 
-  const { error } = await supabase
+  const { error } = await client
     .from("magic")
     .update({ name, user, effect, race, element, type, rank })
     .eq("id", id);
@@ -472,7 +472,7 @@ window.saveEdit = async function() {
 window.deleteMagic = async function() {
   const id = document.getElementById("edit_id").innerText;
 
-  const { error } = await supabase.from("magic").delete().eq("id", id);
+  const { error } = await client.from("magic").delete().eq("id", id);
 
   document.getElementById("editResult").innerText =
     error ? "削除エラー：" + error.message : "削除しました！";
