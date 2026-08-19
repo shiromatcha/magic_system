@@ -237,13 +237,14 @@ const types = ["奇跡","基礎","汎用","近接","遠隔","具現","信仰","�
 // ▼管理者ログイン
 window.loginAdmin = function() {
   const pass = document.getElementById("adminPass").value;
-  if (pass === "admin123") {
+
+  if (pass === "ORCA!operator") {
     document.getElementById("adminArea").style.display = "block";
     document.getElementById("adminStatus").innerText = "ログイン成功";
   } else {
     document.getElementById("adminStatus").innerText = "パスワードが違います";
   }
-};
+}
 
 // ▼追加フォームのタグ生成
 function createAddTags() {
