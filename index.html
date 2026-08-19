@@ -56,10 +56,76 @@
   名前：<input id="add_name"><br><br>
   使用者：<input id="add_user"><br><br>
   効果：<textarea id="add_effect"></textarea><br><br>
-  種族：<input id="add_race"><br><br>
-  属性：<input id="add_element"><br><br>
-  系統：<input id="add_type"><br><br>
-  理環：<input id="add_rank"><br><br>
+
+  種族：
+  <select id="add_race">
+    <option value="">選択してください</option>
+    <option>普人</option>
+    <option>半人</option>
+    <option>森人</option>
+    <option>獣人</option>
+    <option>魚人</option>
+    <option>竜人</option>
+    <option>鬼人</option>
+    <option>亜人</option>
+  </select><br><br>
+
+  属性：
+  <select id="add_element">
+    <option value="">選択してください</option>
+    <option>火</option>
+    <option>水</option>
+    <option>氷</option>
+    <option>風</option>
+    <option>地</option>
+    <option>木</option>
+    <option>雷</option>
+    <option>光</option>
+    <option>闇</option>
+    <option>その他</option>
+  </select><br><br>
+
+  系統：
+  <select id="add_type">
+    <option value="">選択してください</option>
+    <option>奇跡</option>
+    <option>基礎</option>
+    <option>汎用</option>
+    <option>近接</option>
+    <option>遠隔</option>
+    <option>具現</option>
+    <option>信仰</option>
+    <option>強化</option>
+    <option>治癒</option>
+    <option>結界</option>
+    <option>妨害</option>
+    <option>精神</option>
+    <option>音楽</option>
+    <option>舞踊</option>
+    <option>環境</option>
+    <option>召喚</option>
+    <option>操作</option>
+    <option>通信</option>
+    <option>捨象</option>
+  </select><br><br>
+
+  理環：
+  <select id="add_rank">
+    <option value="">選択してください</option>
+    <option>第Ⅰ環</option>
+    <option>第Ⅱ環</option>
+    <option>第Ⅲ環</option>
+    <option>第Ⅳ環</option>
+    <option>第Ⅴ環</option>
+    <option>第Ⅵ環</option>
+    <option>第Ⅶ環</option>
+    <option>第Ⅷ環</option>
+    <option>第Ⅸ環</option>
+    <option>第Ⅹ環</option>
+    <option>第Ⅺ環</option>
+    <option>第Ⅻ環</option>
+    <option>その他</option>
+  </select><br><br>
 
   <button onclick="addMagic()">追加する</button>
   <div id="addResult"></div>
@@ -162,10 +228,76 @@
   名前：<input id="edit_name"><br><br>
   使用者：<input id="edit_user"><br><br>
   効果：<textarea id="edit_effect"></textarea><br><br>
-  種族：<input id="edit_race"><br><br>
-  属性：<input id="edit_element"><br><br>
-  系統：<input id="edit_type"><br><br>
-  理環：<input id="edit_rank"><br><br>
+
+  種族：
+  <select id="edit_race">
+    <option value="">選択してください</option>
+    <option>普人</option>
+    <option>半人</option>
+    <option>森人</option>
+    <option>獣人</option>
+    <option>魚人</option>
+    <option>竜人</option>
+    <option>鬼人</option>
+    <option>亜人</option>
+  </select><br><br>
+
+  属性：
+  <select id="edit_element">
+    <option value="">選択してください</option>
+    <option>火</option>
+    <option>水</option>
+    <option>氷</option>
+    <option>風</option>
+    <option>地</option>
+    <option>木</option>
+    <option>雷</option>
+    <option>光</option>
+    <option>闇</option>
+    <option>その他</option>
+  </select><br><br>
+
+  系統：
+  <select id="edit_type">
+    <option value="">選択してください</option>
+    <option>奇跡</option>
+    <option>基礎</option>
+    <option>汎用</option>
+    <option>近接</option>
+    <option>遠隔</option>
+    <option>具現</option>
+    <option>信仰</option>
+    <option>強化</option>
+    <option>治癒</option>
+    <option>結界</option>
+    <option>妨害</option>
+    <option>精神</option>
+    <option>音楽</option>
+    <option>舞踊</option>
+    <option>環境</option>
+    <option>召喚</option>
+    <option>操作</option>
+    <option>通信</option>
+    <option>捨象</option>
+  </select><br><br>
+
+  理環：
+  <select id="edit_rank">
+    <option value="">選択してください</option>
+    <option>第Ⅰ環</option>
+    <option>第Ⅱ環</option>
+    <option>第Ⅲ環</option>
+    <option>第Ⅳ環</option>
+    <option>第Ⅴ環</option>
+    <option>第Ⅵ環</option>
+    <option>第Ⅶ環</option>
+    <option>第Ⅷ環</option>
+    <option>第Ⅸ環</option>
+    <option>第Ⅹ環</option>
+    <option>第Ⅺ環</option>
+    <option>第Ⅻ環</option>
+    <option>その他</option>
+  </select><br><br>
 
   <button onclick="saveEdit()">保存する</button>
   <div id="editResult"></div>
@@ -223,10 +355,10 @@ window.addMagic = async function() {
 window.filterMagic = async function() {
   const keyword = document.getElementById("keyword").value;
 
-  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race]")];
-  const selectedElement = [...document.querySelectorAll(".tag.selected[data-element]")];
-  const selectedType = [...document.querySelectorAll(".tag.selected[data-type]")];
-  const selectedRank = [...document.querySelectorAll(".tag.selected[data-rank]")];
+  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race]")].map(e => e.dataset.race);
+  const selectedElement = [...document.querySelectorAll(".tag.selected[data-element]")].map(e => e.dataset.element);
+  const selectedType = [...document.querySelectorAll(".tag.selected[data-type]")].map(e => e.dataset.type);
+  const selectedRank = [...document.querySelectorAll(".tag.selected[data-rank]")].map(e => e.dataset.rank);
 
   let query = supabase.from("magic").select("*");
 
