@@ -2,149 +2,174 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>魔法管理・検索システム（Supabase＋管理者権限＋編集機能）</title>
+<title>魔法検索システム</title>
 
 <style>
-body { font-family: sans-serif; padding: 20px; }
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+  }
 
-/* DBD風タグボタン */
-.tag-btn {
-  display: inline-block;
-  padding: 6px 12px;
-  margin: 4px;
-  border: 1px solid #888;
-  border-radius: 6px;
-  cursor: pointer;
-  user-select: none;
-}
-.tag-btn.active {
-  background-color: #4caf50;
-  color: white;
-}
+  .tag {
+    margin: 4px;
+    padding: 6px 12px;
+    background: #eee;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .tag.selected {
+    background: #333;
+    color: white;
+    border-color: #000;
+  }
 
-/* 魔法表示 */
-.magic-item {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-}
+  .section {
+    margin-bottom: 20px;
+  }
+
+  #adminArea, #editArea {
+    display: none;
+    padding: 15px;
+    border: 1px solid #aaa;
+    background: #f8f8f8;
+    margin-bottom: 20px;
+  }
 </style>
 </head>
 <body>
 
-<h2>魔法管理・検索システム（Supabase版）</h2>
+<h1>魔法検索システム</h1>
 
 <!-- ▼管理者ログイン -->
-<h3>管理者ログイン</h3>
-管理者パスワード：  
-<input id="admin_pass" type="password">
-<button onclick="adminLogin()">ログイン</button>
+<div class="section">
+  <h2>管理者ログイン</h2>
+  <input id="adminPass" type="password" placeholder="管理者パスワード">
+  <button onclick="loginAdmin()">ログイン</button>
+  <span id="adminStatus"></span>
+</div>
+
+<!-- ▼管理者専用：魔法追加フォーム -->
+<div id="adminArea">
+  <h2>魔法追加（管理者専用）</h2>
+
+  名前：<input id="add_name"><br><br>
+  使用者：<input id="add_user"><br><br>
+  効果：<textarea id="add_effect"></textarea><br><br>
+  種族：<input id="add_race"><br><br>
+  属性：<input id="add_element"><br><br>
+  系統：<input id="add_type"><br><br>
+  理環：<input id="add_rank"><br><br>
+
+  <button onclick="addMagic()">追加する</button>
+  <div id="addResult"></div>
+</div>
 
 <hr>
 
-<!-- ▼魔法追加・編集フォーム（管理者のみ表示） -->
-<div id="admin_area" style="display:none;">
-
-<h3 id="form_title">魔法を追加する（管理者専用）</h3>
-
-魔法名：<br>
-<input id="add_name" type="text" style="width:300px;"><br><br>
-
-使用者名：<br>
-<input id="add_user" type="text" style="width:300px;"><br><br>
-
-説明文：<br>
-<textarea id="add_effect" style="width:300px; height:80px;"></textarea><br><br>
-
-<!-- ▼種族タグ -->
-<h4>種族</h4>
-<div id="race-tags">
-  <span class="tag-btn" onclick="toggleTag(this)">普人</span>
-  <span class="tag-btn" onclick="toggleTag(this)">半人</span>
-  <span class="tag-btn" onclick="toggleTag(this)">森人</span>
-  <span class="tag-btn" onclick="toggleTag(this)">獣人</span>
-  <span class="tag-btn" onclick="toggleTag(this)">魚人</span>
-  <span class="tag-btn" onclick="toggleTag(this)">竜人</span>
-  <span class="tag-btn" onclick="toggleTag(this)">鬼人</span>
-  <span class="tag-btn" onclick="toggleTag(this)">亜人</span>
+<!-- ▼キーワード検索 -->
+<div class="section">
+  <h2>キーワード検索</h2>
+  <input id="keyword" type="text" style="width:300px;">
+  <button onclick="filterMagic()">検索する</button>
 </div>
-
-<!-- ▼理環タグ -->
-<h4>理環</h4>
-<div id="rank-tags">
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅰ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅱ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅲ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅳ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅴ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅵ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅶ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅷ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅸ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅹ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅺ環</span>
-  <span class="tag-btn" onclick="toggleTag(this)">第Ⅻ環</span>
-</div>
-
-<!-- ▼系統タグ -->
-<h4>系統（魔法律）</h4>
-<div id="type-tags">
-  <span class="tag-btn" onclick="toggleTag(this)">奇跡</span>
-  <span class="tag-btn" onclick="toggleTag(this)">基礎</span>
-  <span class="tag-btn" onclick="toggleTag(this)">汎用</span>
-  <span class="tag-btn" onclick="toggleTag(this)">近接</span>
-  <span class="tag-btn" onclick="toggleTag(this)">遠隔</span>
-  <span class="tag-btn" onclick="toggleTag(this)">具現</span>
-  <span class="tag-btn" onclick="toggleTag(this)">信仰</span>
-  <span class="tag-btn" onclick="toggleTag(this)">強化</span>
-  <span class="tag-btn" onclick="toggleTag(this)">治癒</span>
-  <span class="tag-btn" onclick="toggleTag(this)">結界</span>
-  <span class="tag-btn" onclick="toggleTag(this)">妨害</span>
-  <span class="tag-btn" onclick="toggleTag(this)">精神</span>
-  <span class="tag-btn" onclick="toggleTag(this)">音楽</span>
-  <span class="tag-btn" onclick="toggleTag(this)">舞踊</span>
-  <span class="tag-btn" onclick="toggleTag(this)">環境</span>
-  <span class="tag-btn" onclick="toggleTag(this)">召喚</span>
-  <span class="tag-btn" onclick="toggleTag(this)">操作</span>
-  <span class="tag-btn" onclick="toggleTag(this)">通信</span>
-  <span class="tag-btn" onclick="toggleTag(this)">捨象</span>
-</div>
-
-<!-- ▼属性タグ -->
-<h4>属性</h4>
-<div id="element-tags">
-  <span class="tag-btn" onclick="toggleTag(this)">火</span>
-  <span class="tag-btn" onclick="toggleTag(this)">水</span>
-  <span class="tag-btn" onclick="toggleTag(this)">氷</span>
-  <span class="tag-btn" onclick="toggleTag(this)">風</span>
-  <span class="tag-btn" onclick="toggleTag(this)">地</span>
-  <span class="tag-btn" onclick="toggleTag(this)">木</span>
-  <span class="tag-btn" onclick="toggleTag(this)">雷</span>
-  <span class="tag-btn" onclick="toggleTag(this)">光</span>
-  <span class="tag-btn" onclick="toggleTag(this)">闇</span>
-  <span class="tag-btn" onclick="toggleTag(this)">その他</span>
-</div>
-
-<br>
-<button onclick="saveMagic()">保存する</button>
-
-</div><!-- admin_area -->
 
 <hr>
 
-<!-- ▼検索 -->
-<h3>魔法を検索する</h3>
+<!-- ▼選択検索（タグ） -->
+<h2>選択検索</h2>
 
-キーワード検索：<br>
-<input id="keyword" type="text" style="width:300px;"><br><br>
+<!-- 種族 -->
+<div class="section">
+  <h3>種族</h3>
+  <button class="tag" data-race="普人">普人</button>
+  <button class="tag" data-race="半人">半人</button>
+  <button class="tag" data-race="森人">森人</button>
+  <button class="tag" data-race="獣人">獣人</button>
+  <button class="tag" data-race="魚人">魚人</button>
+  <button class="tag" data-race="竜人">竜人</button>
+  <button class="tag" data-race="鬼人">鬼人</button>
+  <button class="tag" data-race="亜人">亜人</button>
+</div>
 
-<button onclick="filterMagic()">検索する</button>
+<!-- 属性 -->
+<div class="section">
+  <h3>属性</h3>
+  <button class="tag" data-element="火">火</button>
+  <button class="tag" data-element="水">水</button>
+  <button class="tag" data-element="氷">氷</button>
+  <button class="tag" data-element="風">風</button>
+  <button class="tag" data-element="地">地</button>
+  <button class="tag" data-element="木">木</button>
+  <button class="tag" data-element="雷">雷</button>
+  <button class="tag" data-element="光">光</button>
+  <button class="tag" data-element="闇">闇</button>
+  <button class="tag" data-element="その他">その他</button>
+</div>
+
+<!-- 系統 -->
+<div class="section">
+  <h3>系統</h3>
+  <button class="tag" data-type="奇跡">奇跡</button>
+  <button class="tag" data-type="基礎">基礎</button>
+  <button class="tag" data-type="汎用">汎用</button>
+  <button class="tag" data-type="近接">近接</button>
+  <button class="tag" data-type="遠隔">遠隔</button>
+  <button class="tag" data-type="具現">具現</button>
+  <button class="tag" data-type="信仰">信仰</button>
+  <button class="tag" data-type="強化">強化</button>
+  <button class="tag" data-type="治癒">治癒</button>
+  <button class="tag" data-type="結界">結界</button>
+  <button class="tag" data-type="妨害">妨害</button>
+  <button class="tag" data-type="精神">精神</button>
+  <button class="tag" data-type="音楽">音楽</button>
+  <button class="tag" data-type="舞踊">舞踊</button>
+  <button class="tag" data-type="環境">環境</button>
+  <button class="tag" data-type="召喚">召喚</button>
+  <button class="tag" data-type="操作">操作</button>
+  <button class="tag" data-type="通信">通信</button>
+  <button class="tag" data-type="捨象">捨象</button>
+</div>
+
+<!-- 理環 -->
+<div class="section">
+  <h3>理環</h3>
+  <button class="tag" data-rank="第Ⅰ環">第Ⅰ環</button>
+  <button class="tag" data-rank="第Ⅱ環">第Ⅱ環</button>
+  <button class="tag" data-rank="第Ⅲ環">第Ⅲ環</button>
+  <button class="tag" data-rank="第Ⅳ環">第Ⅳ環</button>
+  <button class="tag" data-rank="第Ⅴ環">第Ⅴ環</button>
+  <button class="tag" data-rank="第Ⅵ環">第Ⅵ環</button>
+  <button class="tag" data-rank="第Ⅶ環">第Ⅶ環</button>
+  <button class="tag" data-rank="第Ⅷ環">第Ⅷ環</button>
+  <button class="tag" data-rank="第Ⅸ環">第Ⅸ環</button>
+  <button class="tag" data-rank="第Ⅹ環">第Ⅹ環</button>
+  <button class="tag" data-rank="第Ⅺ環">第Ⅺ環</button>
+  <button class="tag" data-rank="第Ⅻ環">第Ⅻ環</button>
+  <button class="tag" data-rank="その他">その他</button>
+</div>
 
 <hr>
 
 <!-- ▼検索結果 -->
 <div id="result"></div>
+
+<!-- ▼編集フォーム（管理者専用） -->
+<div id="editArea">
+  <h2>魔法編集（管理者専用）</h2>
+
+  ID：<span id="edit_id"></span><br><br>
+  名前：<input id="edit_name"><br><br>
+  使用者：<input id="edit_user"><br><br>
+  効果：<textarea id="edit_effect"></textarea><br><br>
+  種族：<input id="edit_race"><br><br>
+  属性：<input id="edit_element"><br><br>
+  系統：<input id="edit_type"><br><br>
+  理環：<input id="edit_rank"><br><br>
+
+  <button onclick="saveEdit()">保存する</button>
+  <div id="editResult"></div>
+</div>
 
 <!-- ▼Supabase接続 -->
 <script type="module">
@@ -155,162 +180,134 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 let isAdmin = false;
-let editingId = null;
 
 /* ▼管理者ログイン */
-window.adminLogin = function() {
-  const pass = document.getElementById("admin_pass").value;
-
+window.loginAdmin = function() {
+  const pass = document.getElementById("adminPass").value;
   if (pass === "ORCA!operator") {
     isAdmin = true;
-    document.getElementById("admin_area").style.display = "block";
-    alert("管理者ログイン成功");
+    document.getElementById("adminArea").style.display = "block";
+    document.getElementById("adminStatus").innerText = "管理者モード ON";
   } else {
     alert("パスワードが違います");
   }
 };
 
-/* タグボタンのON/OFF */
-window.toggleTag = function(btn) {
-  btn.classList.toggle("active");
-};
-
-/* 選択されたタグを取得 */
-function getSelectedTags(id) {
-  return [...document.getElementById(id).querySelectorAll(".active")]
-    .map(btn => btn.textContent);
-}
-
-/* ▼タグを編集モードに合わせてセット */
-function resetTags(id, csv) {
-  const list = csv.split(",");
-  document.getElementById(id).querySelectorAll(".tag-btn").forEach(btn => {
-    if (list.includes(btn.textContent)) {
-      btn.classList.add("active");
-    } else {
-      btn.classList.remove("active");
-    }
+/* ▼タグ選択処理 */
+document.querySelectorAll(".tag").forEach(btn => {
+  btn.addEventListener("click", () => {
+    btn.classList.toggle("selected");
   });
-}
+});
 
-/* ▼魔法編集モードに入る */
-window.editMagic = async function(id) {
-  const { data } = await supabase.from("magic").select("*").eq("id", id).single();
+/* ▼魔法追加 */
+window.addMagic = async function() {
+  const name = document.getElementById("add_name").value;
+  const user = document.getElementById("add_user").value;
+  const effect = document.getElementById("add_effect").value;
+  const race = document.getElementById("add_race").value;
+  const element = document.getElementById("add_element").value;
+  const type = document.getElementById("add_type").value;
+  const rank = document.getElementById("add_rank").value;
 
-  editingId = id;
-  document.getElementById("form_title").textContent = "魔法を編集する（管理者専用）";
+  const { error } = await supabase.from("magic").insert([
+    { name, user, effect, race, element, type, rank }
+  ]);
 
-  document.getElementById("add_name").value = data.name;
-  document.getElementById("add_user").value = data.user;
-  document.getElementById("add_effect").value = data.effect;
-
-  resetTags("race-tags", data.race);
-  resetTags("rank-tags", data.rank);
-  resetTags("type-tags", data.type);
-  resetTags("element-tags", data.element);
-
-  alert("編集モードに入りました");
-};
-
-/* ▼魔法保存（追加 or 編集） */
-window.saveMagic = async function() {
-  if (!isAdmin) {
-    alert("管理者のみ保存できます");
-    return;
-  }
-
-  const race = getSelectedTags("race-tags");
-  const rank = getSelectedTags("rank-tags");
-  const type = getSelectedTags("type-tags");
-  const element = getSelectedTags("element-tags");
-
-  const magicData = {
-    name: document.getElementById("add_name").value,
-    user: document.getElementById("add_user").value,
-    effect: document.getElementById("add_effect").value,
-    race: race.join(","),
-    rank: rank.join(","),
-    type: type.join(","),
-    element: element.join(",")
-  };
-
-  if (editingId) {
-    await supabase.from("magic").update(magicData).eq("id", editingId);
-    alert("魔法を編集しました！");
-    editingId = null;
-    document.getElementById("form_title").textContent = "魔法を追加する（管理者専用）";
-  } else {
-    await supabase.from("magic").insert(magicData);
-    alert("魔法を追加しました！");
-  }
-
-  filterMagic();
-};
-
-/* ▼魔法削除（管理者のみ） */
-window.deleteMagic = async function(id) {
-  if (!isAdmin) {
-    alert("管理者のみ削除できます");
-    return;
-  }
-
-  await supabase.from("magic").delete().eq("id", id);
-  alert("削除しました");
-  filterMagic();
+  document.getElementById("addResult").innerText =
+    error ? "追加エラー：" + error.message : "追加しました！";
 };
 
 /* ▼検索処理 */
 window.filterMagic = async function() {
-  const keyword = document.getElementById("keyword").value.toLowerCase();
+  const keyword = document.getElementById("keyword").value;
 
-  const { data: magicList } = await supabase.from("magic").select("*");
+  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race]")]
+    .map(btn => btn.dataset.race);
 
-  const race = getSelectedTags("race-tags");
-  const rank = getSelectedTags("rank-tags");
-  const type = getSelectedTags("type-tags");
-  const element = getSelectedTags("element-tags");
+  const selectedElement = [...document.querySelectorAll(".tag.selected[data-element])]
+    .map(btn => btn.dataset.element);
 
-  const result = magicList.filter(m => {
-    const matchRace = race.length === 0 || race.some(r => m.race.includes(r));
-    const matchRank = rank.length === 0 || rank.some(r => m.rank.includes(r));
-    const matchType = type.length === 0 || type.some(t => m.type.includes(t));
-    const matchElement = element.length === 0 || element.some(e => m.element.includes(e));
+  const selectedType = [...document.querySelectorAll(".tag.selected[data-type])]
+    .map(btn => btn.dataset.type);
 
-    const matchKeyword =
-      !keyword ||
-      m.name.toLowerCase().includes(keyword) ||
-      m.user.toLowerCase().includes(keyword) ||
-      m.effect.toLowerCase().includes(keyword);
+  const selectedRank = [...document.querySelectorAll(".tag.selected[data-rank])]
+    .map(btn => btn.dataset.rank);
 
-    return matchRace && matchRank && matchType && matchElement && matchKeyword;
-  });
+  let query = supabase.from("magic").select("*");
 
-  display(result);
-};
+  if (keyword) query = query.ilike("name", `%${keyword}%`);
+  if (selectedRace.length > 0) query = query.in("race", selectedRace);
+  if (selectedElement.length > 0) query = query.in("element", selectedElement);
+  if (selectedType.length > 0) query = query.in("type", selectedType);
+  if (selectedRank.length > 0) query = query.in("rank", selectedRank);
 
-/* ▼検索結果表示（管理者は編集・削除ボタンが出る） */
-function display(list) {
-  const area = document.getElementById("result");
-  area.innerHTML = "";
+  const { data, error } = await query;
 
-  list.forEach(m => {
-    area.innerHTML += `
-      <div class="magic-item">
+  if (error) {
+    document.getElementById("result").innerHTML = "検索エラー：" + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    document.getElementById("result").innerHTML = "該当する魔法はありません。";
+    return;
+  }
+
+  let html = "";
+  data.forEach(m => {
+    html += `
+      <div style="margin-bottom:10px;">
         <strong>${m.name}</strong><br>
-        使用者: ${m.user}<br>
-        種族: ${m.race}<br>
-        理環: ${m.rank}<br>
-        系統: ${m.type}<br>
-        属性: ${m.element}<br>
-        効果: ${m.effect}<br>
-        ${isAdmin ? `
-          <button onclick="editMagic('${m.id}')">編集</button>
-          <button onclick="deleteMagic('${m.id}')">削除</button>
-        ` : ""}
+        使用者：${m.user}<br>
+        種族：${m.race} / 属性：${m.element}<br>
+        系統：${m.type} / 理環：${m.rank}<br>
+        効果：${m.effect}<br>
+        ${isAdmin ? `<button onclick="editMagic(${m.id})">編集</button>` : ""}
       </div>
+      <hr>
     `;
   });
-}
+
+  document.getElementById("result").innerHTML = html;
+};
+
+/* ▼編集開始 */
+window.editMagic = async function(id) {
+  const { data } = await supabase.from("magic").select("*").eq("id", id).single();
+
+  document.getElementById("edit_id").innerText = id;
+  document.getElementById("edit_name").value = data.name;
+  document.getElementById("edit_user").value = data.user;
+  document.getElementById("edit_effect").value = data.effect;
+  document.getElementById("edit_race").value = data.race;
+  document.getElementById("edit_element").value = data.element;
+  document.getElementById("edit_type").value = data.type;
+  document.getElementById("edit_rank").value = data.rank;
+
+  document.getElementById("editArea").style.display = "block";
+};
+
+/* ▼編集保存 */
+window.saveEdit = async function() {
+  const id = document.getElementById("edit_id").innerText;
+
+  const name = document.getElementById("edit_name").value;
+  const user = document.getElementById("edit_user").value;
+  const effect = document.getElementById("edit_effect").value;
+  const race = document.getElementById("edit_race").value;
+  const element = document.getElementById("edit_element").value;
+  const type = document.getElementById("edit_type").value;
+  const rank = document.getElementById("edit_rank").value;
+
+  const { error } = await supabase
+    .from("magic")
+    .update({ name, user, effect, race, element, type, rank })
+    .eq("id", id);
+
+  document.getElementById("editResult").innerText =
+    error ? "保存エラー：" + error.message : "保存しました！";
+};
 </script>
 
 </body>
