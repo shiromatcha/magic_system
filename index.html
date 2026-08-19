@@ -10,7 +10,7 @@
     padding: 20px;
   }
 
-  .tag {
+  .tag, .add-tag, .edit-tag {
     margin: 4px;
     padding: 6px 12px;
     background: #eee;
@@ -18,7 +18,7 @@
     border-radius: 6px;
     cursor: pointer;
   }
-  .tag.selected {
+  .selected {
     background: #333;
     color: white;
     border-color: #000;
@@ -57,75 +57,17 @@
   使用者：<input id="add_user"><br><br>
   効果：<textarea id="add_effect"></textarea><br><br>
 
-  種族：
-  <select id="add_race">
-    <option value="">選択してください</option>
-    <option>普人</option>
-    <option>半人</option>
-    <option>森人</option>
-    <option>獣人</option>
-    <option>魚人</option>
-    <option>竜人</option>
-    <option>鬼人</option>
-    <option>亜人</option>
-  </select><br><br>
+  <h3>種族（複数選択）</h3>
+  <div id="add_race_area"></div>
 
-  属性：
-  <select id="add_element">
-    <option value="">選択してください</option>
-    <option>火</option>
-    <option>水</option>
-    <option>氷</option>
-    <option>風</option>
-    <option>地</option>
-    <option>木</option>
-    <option>雷</option>
-    <option>光</option>
-    <option>闇</option>
-    <option>その他</option>
-  </select><br><br>
+  <h3>属性（複数選択）</h3>
+  <div id="add_element_area"></div>
 
-  系統：
-  <select id="add_type">
-    <option value="">選択してください</option>
-    <option>奇跡</option>
-    <option>基礎</option>
-    <option>汎用</option>
-    <option>近接</option>
-    <option>遠隔</option>
-    <option>具現</option>
-    <option>信仰</option>
-    <option>強化</option>
-    <option>治癒</option>
-    <option>結界</option>
-    <option>妨害</option>
-    <option>精神</option>
-    <option>音楽</option>
-    <option>舞踊</option>
-    <option>環境</option>
-    <option>召喚</option>
-    <option>操作</option>
-    <option>通信</option>
-    <option>捨象</option>
-  </select><br><br>
+  <h3>系統（複数選択）</h3>
+  <div id="add_type_area"></div>
 
-  理環：
-  <select id="add_rank">
-    <option value="">選択してください</option>
-    <option>第Ⅰ環</option>
-    <option>第Ⅱ環</option>
-    <option>第Ⅲ環</option>
-    <option>第Ⅳ環</option>
-    <option>第Ⅴ環</option>
-    <option>第Ⅵ環</option>
-    <option>第Ⅶ環</option>
-    <option>第Ⅷ環</option>
-    <option>第Ⅸ環</option>
-    <option>第Ⅹ環</option>
-    <option>第Ⅺ環</option>
-    <option>第Ⅻ環</option>
-    <option>その他</option>
-  </select><br><br>
+  <h3>理環（複数選択）</h3>
+  <div id="add_rank_area"></div>
 
   <button onclick="addMagic()">追加する</button>
   <div id="addResult"></div>
@@ -229,77 +171,20 @@
   使用者：<input id="edit_user"><br><br>
   効果：<textarea id="edit_effect"></textarea><br><br>
 
-  種族：
-  <select id="edit_race">
-    <option value="">選択してください</option>
-    <option>普人</option>
-    <option>半人</option>
-    <option>森人</option>
-    <option>獣人</option>
-    <option>魚人</option>
-    <option>竜人</option>
-    <option>鬼人</option>
-    <option>亜人</option>
-  </select><br><br>
+  <h3>種族（複数選択）</h3>
+  <div id="edit_race_area"></div>
 
-  属性：
-  <select id="edit_element">
-    <option value="">選択してください</option>
-    <option>火</option>
-    <option>水</option>
-    <option>氷</option>
-    <option>風</option>
-    <option>地</option>
-    <option>木</option>
-    <option>雷</option>
-    <option>光</option>
-    <option>闇</option>
-    <option>その他</option>
-  </select><br><br>
+  <h3>属性（複数選択）</h3>
+  <div id="edit_element_area"></div>
 
-  系統：
-  <select id="edit_type">
-    <option value="">選択してください</option>
-    <option>奇跡</option>
-    <option>基礎</option>
-    <option>汎用</option>
-    <option>近接</option>
-    <option>遠隔</option>
-    <option>具現</option>
-    <option>信仰</option>
-    <option>強化</option>
-    <option>治癒</option>
-    <option>結界</option>
-    <option>妨害</option>
-    <option>精神</option>
-    <option>音楽</option>
-    <option>舞踊</option>
-    <option>環境</option>
-    <option>召喚</option>
-    <option>操作</option>
-    <option>通信</option>
-    <option>捨象</option>
-  </select><br><br>
+  <h3>系統（複数選択）</h3>
+  <div id="edit_type_area"></div>
 
-  理環：
-  <select id="edit_rank">
-    <option value="">選択してください</option>
-    <option>第Ⅰ環</option>
-    <option>第Ⅱ環</option>
-    <option>第Ⅲ環</option>
-    <option>第Ⅳ環</option>
-    <option>第Ⅴ環</option>
-    <option>第Ⅵ環</option>
-    <option>第Ⅶ環</option>
-    <option>第Ⅷ環</option>
-    <option>第Ⅸ環</option>
-    <option>第Ⅹ環</option>
-    <option>第Ⅺ環</option>
-    <option>第Ⅻ環</option>
-    <option>その他</option>
-  </select><br><br>
+  <h3>理環（複数選択）</h3>
+  <div id="edit_rank_area"></div>
 
   <button onclick="saveEdit()">保存する</button>
+  <button onclick="deleteMagic()">削除する</button>
   <div id="editResult"></div>
 </div>
 
@@ -326,22 +211,54 @@ window.loginAdmin = function() {
   }
 };
 
-/* ▼タグ選択処理 */
+/* ▼検索タグの選択処理 */
 document.querySelectorAll(".tag").forEach(btn => {
   btn.addEventListener("click", () => {
     btn.classList.toggle("selected");
   });
 });
 
+/* ▼複数選択ボタンの候補一覧 */
+const races = ["普人","半人","森人","獣人","魚人","竜人","鬼人","亜人"];
+const elements = ["火","水","氷","風","地","木","雷","光","闇","その他"];
+const types = ["奇跡","基礎","汎用","近接","遠隔","具現","信仰","強化","治癒","結界","妨害","精神","音楽","舞踊","環境","召喚","操作","通信","捨象"];
+const ranks = ["第Ⅰ環","第Ⅱ環","第Ⅲ環","第Ⅳ環","第Ⅴ環","第Ⅵ環","第Ⅶ環","第Ⅷ環","第Ⅸ環","第Ⅹ環","第Ⅺ環","第Ⅻ環","その他"];
+
+/* ▼複数選択ボタン生成関数 */
+function createMultiButtons(areaId, list, className) {
+  const area = document.getElementById(areaId);
+  list.forEach(v => {
+    const btn = document.createElement("button");
+    btn.innerText = v;
+    btn.className = className;
+    btn.dataset.value = v;
+    btn.onclick = () => btn.classList.toggle("selected");
+    area.appendChild(btn);
+  });
+}
+
+/* ▼追加フォームのボタン生成 */
+createMultiButtons("add_race_area", races, "add-tag");
+createMultiButtons("add_element_area", elements, "add-tag");
+createMultiButtons("add_type_area", types, "add-tag");
+createMultiButtons("add_rank_area", ranks, "add-tag");
+
+/* ▼編集フォームのボタン生成 */
+createMultiButtons("edit_race_area", races, "edit-tag");
+createMultiButtons("edit_element_area", elements, "edit-tag");
+createMultiButtons("edit_type_area", types, "edit-tag");
+createMultiButtons("edit_rank_area", ranks, "edit-tag");
+
 /* ▼魔法追加 */
 window.addMagic = async function() {
   const name = document.getElementById("add_name").value;
   const user = document.getElementById("add_user").value;
   const effect = document.getElementById("add_effect").value;
-  const race = document.getElementById("add_race").value;
-  const element = document.getElementById("add_element").value;
-  const type = document.getElementById("add_type").value;
-  const rank = document.getElementById("add_rank").value;
+
+  const race = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
+  const element = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
+  const type = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
+  const rank = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
 
   const { error } = await supabase.from("magic").insert([
     { name, user, effect, race, element, type, rank }
@@ -363,10 +280,10 @@ window.filterMagic = async function() {
   let query = supabase.from("magic").select("*");
 
   if (keyword) query = query.ilike("name", `%${keyword}%`);
-  if (selectedRace.length > 0) query = query.in("race", selectedRace);
-  if (selectedElement.length > 0) query = query.in("element", selectedElement);
-  if (selectedType.length > 0) query = query.in("type", selectedType);
-  if (selectedRank.length > 0) query = query.in("rank", selectedRank);
+  if (selectedRace.length > 0) query = query.contains("race", selectedRace);
+  if (selectedElement.length > 0) query = query.contains("element", selectedElement);
+  if (selectedType.length > 0) query = query.contains("type", selectedType);
+  if (selectedRank.length > 0) query = query.contains("rank", selectedRank);
 
   const { data, error } = await query;
 
@@ -386,10 +303,11 @@ window.filterMagic = async function() {
       <div style="margin-bottom:10px;">
         <strong>${m.name}</strong><br>
         使用者：${m.user}<br>
-        種族：${m.race} / 属性：${m.element}<br>
-        系統：${m.type} / 理環：${m.rank}<br>
+        種族：${m.race.join(", ")} / 属性：${m.element.join(", ")}<br>
+        系統：${m.type.join(", ")} / 理環：${m.rank.join(", ")}<br>
         効果：${m.effect}<br>
-        ${isAdmin ? `<button onclick="editMagic(${m.id})">編集</button>` : ""}
+        ${isAdmin ? `<button onclick="editMagic(${m.id})">編集</button>
+                     <button onclick="deleteMagic(${m.id})">削除</button>` : ""}
       </div>
       <hr>
     `;
@@ -406,10 +324,21 @@ window.editMagic = async function(id) {
   document.getElementById("edit_name").value = data.name;
   document.getElementById("edit_user").value = data.user;
   document.getElementById("edit_effect").value = data.effect;
-  document.getElementById("edit_race").value = data.race;
-  document.getElementById("edit_element").value = data.element;
-  document.getElementById("edit_type").value = data.type;
-  document.getElementById("edit_rank").value = data.rank;
+
+  /* ▼既存データをボタンに反映 */
+  document.querySelectorAll(".edit-tag").forEach(btn => {
+    const v = btn.dataset.value;
+    if (
+      data.race.includes(v) ||
+      data.element.includes(v) ||
+      data.type.includes(v) ||
+      data.rank.includes(v)
+    ) {
+      btn.classList.add("selected");
+    } else {
+      btn.classList.remove("selected");
+    }
+  });
 
   document.getElementById("editArea").style.display = "block";
 };
@@ -421,10 +350,11 @@ window.saveEdit = async function() {
   const name = document.getElementById("edit_name").value;
   const user = document.getElementById("edit_user").value;
   const effect = document.getElementById("edit_effect").value;
-  const race = document.getElementById("edit_race").value;
-  const element = document.getElementById("edit_element").value;
-  const type = document.getElementById("edit_type").value;
-  const rank = document.getElementById("edit_rank").value;
+
+  const race = [...document.querySelectorAll("#edit_race_area .edit-tag.selected")].map(e => e.dataset.value);
+  const element = [...document.querySelectorAll("#edit_element_area .edit-tag.selected")].map(e => e.dataset.value);
+  const type = [...document.querySelectorAll("#edit_type_area .edit-tag.selected")].map(e => e.dataset.value);
+  const rank = [...document.querySelectorAll("#edit_rank_area .edit-tag.selected")].map(e => e.dataset.value);
 
   const { error } = await supabase
     .from("magic")
@@ -433,6 +363,18 @@ window.saveEdit = async function() {
 
   document.getElementById("editResult").innerText =
     error ? "保存エラー：" + error.message : "保存しました！";
+};
+
+/* ▼削除機能 */
+window.deleteMagic = async function(id) {
+  if (!confirm("本当に削除しますか？")) return;
+
+  const { error } = await supabase.from("magic").delete().eq("id", id);
+
+  document.getElementById("editResult").innerText =
+    error ? "削除エラー：" + error.message : "削除しました！";
+
+  filterMagic(); // 再読み込み
 };
 </script>
 
