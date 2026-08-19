@@ -66,9 +66,25 @@
   <h3>系統（複数選択）</h3>
   <div id="add_type_area"></div>
 
-  <h3>理環（複数選択）</h3>
-  <div id="add_rank_area"></div>
+  <!-- ▼理環だけ単一選択 -->
+  <h3>理環（単一選択）</h3>
+  <select id="add_rank">
+    <option value="第Ⅰ環">第Ⅰ環</option>
+    <option value="第Ⅱ環">第Ⅱ環</option>
+    <option value="第Ⅲ環">第Ⅲ環</option>
+    <option value="第Ⅳ環">第Ⅳ環</option>
+    <option value="第Ⅴ環">第Ⅴ環</option>
+    <option value="第Ⅵ環">第Ⅵ環</option>
+    <option value="第Ⅶ環">第Ⅶ環</option>
+    <option value="第Ⅷ環">第Ⅷ環</option>
+    <option value="第Ⅸ環">第Ⅸ環</option>
+    <option value="第Ⅹ環">第Ⅹ環</option>
+    <option value="第Ⅺ環">第Ⅺ環</option>
+    <option value="第Ⅻ環">第Ⅻ環</option>
+    <option value="その他">その他</option>
+  </select>
 
+  <br><br>
   <button onclick="addMagic()">追加する</button>
   <div id="addResult"></div>
 </div>
@@ -98,6 +114,7 @@
   <button class="tag" data-race="竜人">竜人</button>
   <button class="tag" data-race="鬼人">鬼人</button>
   <button class="tag" data-race="亜人">亜人</button>
+  <button class="tag" data-race="全種族">全種族</button>
 </div>
 
 <!-- 属性 -->
@@ -139,7 +156,7 @@
   <button class="tag" data-type="捨象">捨象</button>
 </div>
 
-<!-- 理環 -->
+<!-- 理環（検索側は複数選択のまま） -->
 <div class="section">
   <h3>理環</h3>
   <button class="tag" data-rank="第Ⅰ環">第Ⅰ環</button>
@@ -162,7 +179,7 @@
 <!-- ▼検索結果 -->
 <div id="result"></div>
 
-<!-- ▼編集フォーム（管理者専用） -->
+<!-- ▼編集フォーム -->
 <div id="editArea">
   <h2>魔法編集（管理者専用）</h2>
 
@@ -180,143 +197,223 @@
   <h3>系統（複数選択）</h3>
   <div id="edit_type_area"></div>
 
-  <h3>理環（複数選択）</h3>
-  <div id="edit_rank_area"></div>
+  <h3>理環（単一選択）</h3>
+  <select id="edit_rank">
+    <option value="第Ⅰ環">第Ⅰ環</option>
+    <option value="第Ⅱ環">第Ⅱ環</option>
+    <option value="第Ⅲ環">第Ⅲ環</option>
+    <option value="第Ⅳ環">第Ⅳ環</option>
+    <option value="第Ⅴ環">第Ⅴ環</option>
+    <option value="第Ⅵ環">第Ⅵ環</option>
+    <option value="第Ⅶ環">第Ⅶ環</option>
+    <option value="第Ⅷ環">第Ⅷ環</option>
+    <option value="第Ⅸ環">第Ⅸ環</option>
+    <option value="第Ⅹ環">第Ⅹ環</option>
+    <option value="第Ⅺ環">第Ⅺ環</option>
+    <option value="第Ⅻ環">第Ⅻ環</option>
+    <option value="その他">その他</option>
+  </select>
 
+  <br><br>
   <button onclick="saveEdit()">保存する</button>
   <button onclick="deleteMagic()">削除する</button>
   <div id="editResult"></div>
 </div>
 
-<!-- ▼Supabase接続 -->
-<script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js";
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
 
+// Supabase 初期化（礼のプロジェクト情報を埋め込み済み）
 const supabaseUrl = "https://cdgwvifyhknatufkrefz.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkZ3d2aWZ5aGtuYXR1ZmtyZWZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxMzE0NzAsImV4cCI6MjEwMjcwNzQ3MH0.fhkUVzhzd7s2kGnhWrxYeU5HoMjIV5N1Knk4kWkukus";
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-let isAdmin = false;
+// ▼タグ生成用データ
+const races = ["普人","半人","森人","獣人","魚人","竜人","鬼人","亜人","全種族"];
+const elements = ["火","水","氷","風","地","木","雷","光","闇","その他"];
+const types = ["奇跡","基礎","汎用","近接","遠隔","具現","信仰","強化","治癒","結界","妨害","精神","音楽","舞踊","環境","召喚","操作","通信","捨象"];
 
-/* ▼管理者ログイン */
+// ▼管理者ログイン
 window.loginAdmin = function() {
   const pass = document.getElementById("adminPass").value;
-  if (pass === "ORCA!operator") {
-    isAdmin = true;
+  if (pass === "admin123") {
     document.getElementById("adminArea").style.display = "block";
-    document.getElementById("adminStatus").innerText = "管理者モード ON";
+    document.getElementById("adminStatus").innerText = "ログイン成功";
   } else {
-    alert("パスワードが違います");
+    document.getElementById("adminStatus").innerText = "パスワードが違います";
   }
 };
 
-/* ▼検索タグの選択処理 */
-document.querySelectorAll(".tag").forEach(btn => {
-  btn.addEventListener("click", () => {
-    btn.classList.toggle("selected");
+// ▼追加フォームのタグ生成
+function createAddTags() {
+  const raceArea = document.getElementById("add_race_area");
+  races.forEach(r => {
+    const b = document.createElement("button");
+    b.className = "add-tag";
+    b.dataset.value = r;
+    b.innerText = r;
+    b.onclick = () => b.classList.toggle("selected");
+    raceArea.appendChild(b);
   });
-});
 
-/* ▼複数選択ボタンの候補一覧 */
-const races = ["普人","半人","森人","獣人","魚人","竜人","鬼人","亜人"];
-const elements = ["火","水","氷","風","地","木","雷","光","闇","その他"];
-const types = ["奇跡","基礎","汎用","近接","遠隔","具現","信仰","強化","治癒","結界","妨害","精神","音楽","舞踊","環境","召喚","操作","通信","捨象"];
-const ranks = ["第Ⅰ環","第Ⅱ環","第Ⅲ環","第Ⅳ環","第Ⅴ環","第Ⅵ環","第Ⅶ環","第Ⅷ環","第Ⅸ環","第Ⅹ環","第Ⅺ環","第Ⅻ環","その他"];
+  const elementArea = document.getElementById("add_element_area");
+  elements.forEach(e => {
+    const b = document.createElement("button");
+    b.className = "add-tag";
+    b.dataset.value = e;
+    b.innerText = e;
+    b.onclick = () => b.classList.toggle("selected");
+    elementArea.appendChild(b);
+  });
 
-/* ▼複数選択ボタン生成関数 */
-function createMultiButtons(areaId, list, className) {
-  const area = document.getElementById(areaId);
-  list.forEach(v => {
-    const btn = document.createElement("button");
-    btn.innerText = v;
-    btn.className = className;
-    btn.dataset.value = v;
-    btn.onclick = () => btn.classList.toggle("selected");
-    area.appendChild(btn);
+  const typeArea = document.getElementById("add_type_area");
+  types.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "add-tag";
+    b.dataset.value = t;
+    b.innerText = t;
+    b.onclick = () => b.classList.toggle("selected");
+    typeArea.appendChild(b);
   });
 }
+createAddTags();
 
-/* ▼追加フォームのボタン生成 */
-createMultiButtons("add_race_area", races, "add-tag");
-createMultiButtons("add_element_area", elements, "add-tag");
-createMultiButtons("add_type_area", types, "add-tag");
-createMultiButtons("add_rank_area", ranks, "add-tag");
-
-/* ▼編集フォームのボタン生成 */
-createMultiButtons("edit_race_area", races, "edit-tag");
-createMultiButtons("edit_element_area", elements, "edit-tag");
-createMultiButtons("edit_type_area", types, "edit-tag");
-createMultiButtons("edit_rank_area", ranks, "edit-tag");
-
-/* ▼魔法追加 */
+// ▼魔法追加
 window.addMagic = async function() {
   const name = document.getElementById("add_name").value;
   const user = document.getElementById("add_user").value;
   const effect = document.getElementById("add_effect").value;
 
-  const race = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
-  const element = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
-  const type = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
-  const rank = [...document.querySelectorAll(".add-tag.selected")].map(e => e.dataset.value);
+  const race = [...document.querySelectorAll("#add_race_area .add-tag.selected")].map(e => e.dataset.value);
+  const element = [...document.querySelectorAll("#add_element_area .add-tag.selected")].map(e => e.dataset.value);
+  const type = [...document.querySelectorAll("#add_type_area .add-tag.selected")].map(e => e.dataset.value);
 
-  const { error } = await supabase.from("magic").insert([
-    { name, user, effect, race, element, type, rank }
-  ]);
+  const rank = document.getElementById("add_rank").value;
+
+  const { error } = await supabase
+    .from("magic")
+    .insert([{ name, user, effect, race, element, type, rank }]);
 
   document.getElementById("addResult").innerText =
     error ? "追加エラー：" + error.message : "追加しました！";
 };
 
-/* ▼検索処理 */
+// ▼検索タグの選択
+document.querySelectorAll(".tag").forEach(tag => {
+  tag.onclick = () => tag.classList.toggle("selected");
+});
+
+// ▼魔法検索
 window.filterMagic = async function() {
   const keyword = document.getElementById("keyword").value;
 
-  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race]")].map(e => e.dataset.race);
-  const selectedElement = [...document.querySelectorAll(".tag.selected[data-element]")].map(e => e.dataset.element);
-  const selectedType = [...document.querySelectorAll(".tag.selected[data-type]")].map(e => e.dataset.type);
-  const selectedRank = [...document.querySelectorAll(".tag.selected[data-rank]")].map(e => e.dataset.rank);
+  const selectedRaces = [...document.querySelectorAll(".tag.selected[data-race]")]
+    .map(e => e.dataset.race);
 
-  let query = supabase.from("magic").select("*");
+  const ignoreRace = selectedRaces.includes("全種族");
 
-  if (keyword) query = query.ilike("name", `%${keyword}%`);
-  if (selectedRace.length > 0) query = query.contains("race", selectedRace);
-  if (selectedElement.length > 0) query = query.contains("element", selectedElement);
-  if (selectedType.length > 0) query = query.contains("type", selectedType);
-  if (selectedRank.length > 0) query = query.contains("rank", selectedRank);
+  const selectedElements = [...document.querySelectorAll(".tag.selected[data-element])]
+    .map(e => e.dataset.element);
 
-  const { data, error } = await query;
+  const selectedTypes = [...document.querySelectorAll(".tag.selected[data-type])]
+    .map(e => e.dataset.type);
 
-  if (error) {
-    document.getElementById("result").innerHTML = "検索エラー：" + error.message;
-    return;
-  }
+  const selectedRanks = [...document.querySelectorAll(".tag.selected[data-rank])]
+    .map(e => e.dataset.rank);
 
-  if (!data || data.length === 0) {
-    document.getElementById("result").innerHTML = "該当する魔法はありません。";
-    return;
-  }
+  const { data } = await supabase.from("magic").select("*");
 
-  let html = "";
-  data.forEach(m => {
-    html += `
-      <div style="margin-bottom:10px;">
-        <strong>${m.name}</strong><br>
-        使用者：${m.user}<br>
-        種族：${m.race.join(", ")} / 属性：${m.element.join(", ")}<br>
-        系統：${m.type.join(", ")} / 理環：${m.rank.join(", ")}<br>
-        効果：${m.effect}<br>
-        ${isAdmin ? `<button onclick="editMagic(${m.id})">編集</button>
-                     <button onclick="deleteMagic(${m.id})">削除</button>` : ""}
-      </div>
-      <hr>
-    `;
+  const filtered = data.filter(row => {
+
+    if (keyword) {
+      const text = `${row.name}${row.user}${row.effect}`;
+      if (!text.includes(keyword)) return false;
+    }
+
+    if (!ignoreRace && selectedRaces.length > 0) {
+      if (!selectedRaces.some(r => (row.race || []).includes(r))) return false;
+    }
+
+    if (selectedElements.length > 0) {
+      if (!selectedElements.some(e => (row.element || []).includes(e))) return false;
+    }
+
+    if (selectedTypes.length > 0) {
+      if (!selectedTypes.some(t => (row.type || []).includes(t))) return false;
+    }
+
+    if (selectedRanks.length > 0) {
+      if (!selectedRanks.includes(row.rank)) return false;
+    }
+
+    return true;
   });
 
-  document.getElementById("result").innerHTML = html;
+  displayResult(filtered);
 };
 
-/* ▼編集開始 */
+// ▼検索結果表示
+function displayResult(list) {
+  const area = document.getElementById("result");
+  area.innerHTML = "";
+
+  list.forEach(row => {
+    const div = document.createElement("div");
+    div.style.border = "1px solid #aaa";
+    div.style.padding = "10px";
+    div.style.margin = "10px 0";
+
+    div.innerHTML = `
+      <b>${row.name}</b><br>
+      使用者：${row.user}<br>
+      効果：${row.effect}<br>
+      種族：${row.race.join(" / ")}<br>
+      属性：${row.element.join(" / ")}<br>
+      系統：${row.type.join(" / ")}<br>
+      理環：${row.rank}<br>
+      <button onclick="editMagic(${row.id})">編集</button>
+    `;
+
+    area.appendChild(div);
+  });
+}
+
+// ▼編集フォームのタグ生成
+function createEditTags() {
+  const raceArea = document.getElementById("edit_race_area");
+  races.forEach(r => {
+    const b = document.createElement("button");
+    b.className = "edit-tag";
+    b.dataset.value = r;
+    b.innerText = r;
+    b.onclick = () => b.classList.toggle("selected");
+    raceArea.appendChild(b);
+  });
+
+  const elementArea = document.getElementById("edit_element_area");
+  elements.forEach(e => {
+    const b = document.createElement("button");
+    b.className = "edit-tag";
+    b.dataset.value = e;
+    b.innerText = e;
+    b.onclick = () => b.classList.toggle("selected");
+    elementArea.appendChild(b);
+  });
+
+  const typeArea = document.getElementById("edit_type_area");
+  types.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "edit-tag";
+    b.dataset.value = t;
+    b.innerText = t;
+    b.onclick = () => b.classList.toggle("selected");
+    typeArea.appendChild(b);
+  });
+}
+createEditTags();
+
+// ▼編集開始
 window.editMagic = async function(id) {
   const { data } = await supabase.from("magic").select("*").eq("id", id).single();
 
@@ -325,25 +422,24 @@ window.editMagic = async function(id) {
   document.getElementById("edit_user").value = data.user;
   document.getElementById("edit_effect").value = data.effect;
 
-  /* ▼既存データをボタンに反映 */
-  document.querySelectorAll(".edit-tag").forEach(btn => {
-    const v = btn.dataset.value;
-    if (
-      data.race.includes(v) ||
-      data.element.includes(v) ||
-      data.type.includes(v) ||
-      data.rank.includes(v)
-    ) {
-      btn.classList.add("selected");
-    } else {
-      btn.classList.remove("selected");
-    }
+  document.querySelectorAll("#edit_race_area .edit-tag").forEach(b => {
+    b.classList.toggle("selected", data.race.includes(b.dataset.value));
   });
+
+  document.querySelectorAll("#edit_element_area .edit-tag").forEach(b => {
+    b.classList.toggle("selected", data.element.includes(b.dataset.value));
+  });
+
+  document.querySelectorAll("#edit_type_area .edit-tag").forEach(b => {
+    b.classList.toggle("selected", data.type.includes(b.dataset.value));
+  });
+
+  document.getElementById("edit_rank").value = data.rank;
 
   document.getElementById("editArea").style.display = "block";
 };
 
-/* ▼編集保存 */
+// ▼編集保存
 window.saveEdit = async function() {
   const id = document.getElementById("edit_id").innerText;
 
@@ -354,7 +450,8 @@ window.saveEdit = async function() {
   const race = [...document.querySelectorAll("#edit_race_area .edit-tag.selected")].map(e => e.dataset.value);
   const element = [...document.querySelectorAll("#edit_element_area .edit-tag.selected")].map(e => e.dataset.value);
   const type = [...document.querySelectorAll("#edit_type_area .edit-tag.selected")].map(e => e.dataset.value);
-  const rank = [...document.querySelectorAll("#edit_rank_area .edit-tag.selected")].map(e => e.dataset.value);
+
+  const rank = document.getElementById("edit_rank").value;
 
   const { error } = await supabase
     .from("magic")
@@ -363,20 +460,26 @@ window.saveEdit = async function() {
 
   document.getElementById("editResult").innerText =
     error ? "保存エラー：" + error.message : "保存しました！";
+
+  if (!error) {
+    document.getElementById("editArea").style.display = "none";
+  }
 };
 
-/* ▼削除機能 */
-window.deleteMagic = async function(id) {
-  if (!confirm("本当に削除しますか？")) return;
+// ▼削除
+window.deleteMagic = async function() {
+  const id = document.getElementById("edit_id").innerText;
 
   const { error } = await supabase.from("magic").delete().eq("id", id);
 
   document.getElementById("editResult").innerText =
     error ? "削除エラー：" + error.message : "削除しました！";
 
-  filterMagic(); // 再読み込み
+  if (!error) {
+    document.getElementById("editArea").style.display = "none";
+  }
 };
-</script>
 
+</script>
 </body>
 </html>
