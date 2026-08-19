@@ -176,7 +176,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
 const supabaseUrl = "https://cdgwvifyhknatufkrefz.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkZ3d2aWZ5aGtuYXR1ZmtyZWZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxMzE0NzAsImV4cCI6MjEwMjcwNzQ3MH0.fhkUVzhzd7s2kGnhWrxYeU5HoMjIV5N1Knk4kWkukus";
+const supabaseKey =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkZ3d2aWZ5aGtuYXR1ZmtyZWZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxMzE0NzAsImV4cCI6MjEwMjcwNzQ3MH0.fhkUVzhzd7s2kGnhWrxYeU5HoMjIV5N1Knk4kWkukus";
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 let isAdmin = false;
@@ -222,7 +224,7 @@ window.addMagic = async function() {
 window.filterMagic = async function() {
   const keyword = document.getElementById("keyword").value;
 
-  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race]")]
+  const selectedRace = [...document.querySelectorAll(".tag.selected[data-race])]
     .map(btn => btn.dataset.race);
 
   const selectedElement = [...document.querySelectorAll(".tag.selected[data-element])]
